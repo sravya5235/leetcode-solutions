@@ -1,11 +1,14 @@
 class Solution:
     def maxProfit(self, prices):
-        n = len(prices)
-        dp = [0] * n
-        min_price = prices[0]
+        min_price = float('inf')
+        max_profit = 0
 
-        for i in range(1, n):
-            min_price = min(min_price, prices[i])
-            dp[i] = max(dp[i - 1], prices[i] - min_price)
+        for price in prices:
+            # Track minimum price seen so far
+            if price < min_price:
+                min_price = price
+            else:
+                # Calculate profit if sold today
+                max_profit = max(max_profit, price - min_price)
 
-        return dp[-1]
+        return max_profit
