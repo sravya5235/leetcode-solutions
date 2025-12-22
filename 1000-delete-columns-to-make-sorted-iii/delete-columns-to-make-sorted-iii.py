@@ -1,16 +1,22 @@
+from typing import List
+
 class Solution:
-    def minDeletionSize(self, strs: list[str]) -> int:
-        n = len(strs)
-        m = len(strs[0])
+    def minDeletionSize(self, strs: List[str]) -> int:
+        n = len(strs[0])
+        m = len(strs)
+        dp = [1] * n
 
-        # dp[j] = max kept columns ending at column j
-        dp = [1] * m
+        for i in range(1, n):
+            for j in range(i):
+                ok = True
+                for r in range(m):
+                    if strs[r][j] > strs[r][i]:
+                        ok = False
+                        break
+                if ok:
+                    dp[i] = max(dp[i], dp[j] + 1)
 
-        for j in range(m):
-            for i in range(j):
-                # check if column i can come before column j
-                if all(strs[r][i] <= strs[r][j] for r in range(n)):
-                    dp[j] = max(dp[j], dp[i] + 1)
-
-        max_kept = max(dp)
-        return m - max_kept
+        mx = 0
+        for v in dp:
+            mx = max(mx, v)
+        return n - mx
