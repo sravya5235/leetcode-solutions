@@ -3,39 +3,33 @@ class Solution:
         rows, cols = len(grid), len(grid[0])
         
         def isMagic(r, c):
-            nums = set()
+            if grid[r+1][c+1] != 5:
+                return False
             
-            # Collect numbers and validate range
+            nums = set()
             for i in range(3):
                 for j in range(3):
-                    val = grid[r + i][c + j]
-                    if val < 1 or val > 9:
-                        return False
-                    nums.add(val)
+                    nums.add(grid[r+i][c+j])
             
-            # Must be exactly 9 unique numbers
-            if len(nums) != 9:
+            if nums != set(range(1, 10)):
                 return False
             
-            # Check rows and columns
-            for i in range(3):
-                if sum(grid[r + i][c + j] for j in range(3)) != 15:
-                    return False
-                if sum(grid[r + j][c + i] for j in range(3)) != 15:
-                    return False
-            
-            # Check diagonals
-            if grid[r][c] + grid[r+1][c+1] + grid[r+2][c+2] != 15:
-                return False
-            if grid[r][c+2] + grid[r+1][c+1] + grid[r+2][c] != 15:
-                return False
-            
-            return True
+            s = 15
+            return (
+                grid[r][c] + grid[r][c+1] + grid[r][c+2] == s and
+                grid[r+1][c] + grid[r+1][c+1] + grid[r+1][c+2] == s and
+                grid[r+2][c] + grid[r+2][c+1] + grid[r+2][c+2] == s and
+                grid[r][c] + grid[r+1][c] + grid[r+2][c] == s and
+                grid[r][c+1] + grid[r+1][c+1] + grid[r+2][c+1] == s and
+                grid[r][c+2] + grid[r+1][c+2] + grid[r+2][c+2] == s and
+                grid[r][c] + grid[r+1][c+1] + grid[r+2][c+2] == s and
+                grid[r][c+2] + grid[r+1][c+1] + grid[r+2][c] == s
+            )
         
-        count = 0
+        ans = 0
         for i in range(rows - 2):
             for j in range(cols - 2):
                 if isMagic(i, j):
-                    count += 1
+                    ans += 1
         
-        return count
+        return ans
