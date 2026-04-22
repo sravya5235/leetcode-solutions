@@ -1,71 +1,34 @@
-class Solution(object):
-    def isScramble(self, s1, s2):
-        """
-        :type s1: str
-        :type s2: str
-        :rtype: bool
-        """
-        # Base cases
+class Solution:
+    # dictionary to store previously computed substrings
+    map = {}
 
+    def isScramble(self, s1: str, s2: str) -> bool:
         n = len(s1)
-
-        # If both strings are not equal in size
-        if len(s2) != n:
-            return False
-
-        # If both strings are equal
+        # check if the two strings are equal
         if s1 == s2:
             return True
-
-        # If code is reached to this condition then following this are sure:
-        # 1. size of both string is equal
-        # 2. string are not equal
-        # so size is equal (where size==1) and they are not equal then obviously false
-        # example 'a' and 'b' size is equal, string are not equal
-        if n == 1:
-            return False
-
-        key = s1 + " " + s2
-
-        # Check if this problem has already been solved
-        if key in self.mp:
-            return self.mp[key]
-
-        # For every iteration it can two condition
-        # 1. We should proceed without swapping
-        # 2. We should swap before looking next
+        # initialize frequency lists for s1, s2, and current substring
+        a, b, c = [0] * 26, [0] * 26, [0] * 26
+        # check if the current substring has already been computed
+        if (s1 + s2) in self.map:
+            return self.map[s1 + s2]
+        # check all possible splits of the two strings
         for i in range(1, n):
-            # ex of without swap: gr|eat and rg|eat
-            without_swap = (
-                # Left part of first and second string
-                self.isScramble(s1[:i], s2[:i])
-                and
-                # Right part of first and second string;
-                self.isScramble(s1[i:], s2[i:])
-            )
-
-            # If without swap gives us the right answer then we do not need
-            # to call the recursion with swap
-            if without_swap:
+            j = n - i
+            # update frequency lists for s1, s2, and current substring
+            a[ord(s1[i - 1]) - ord('a')] += 1
+            b[ord(s2[i - 1]) - ord('a')] += 1
+            c[ord(s2[j]) - ord('a')] += 1
+            # check if the current substring has the same characters
+            if a == b and self.isScramble(s1[:i], s2[:i]) and self.isScramble(s1[i:], s2[i:]):
+                # if the substrings are scrambled versions of each other, return True
+                self.map[s1 + s2] = True
                 return True
-
-            # ex of with swap: gr|eat rge|at
-            # here we compare "gr" with "at" and "eat" with "rge"
-            with_swap = (
-                # Left part of first and right part of second
-                self.isScramble(s1[:i], s2[n-i:])
-                and
-                # Right part of first and left part of second
-                self.isScramble(s1[i:], s2[:n-i])
-            )
-
-            # If with swap gives us the right answer then we return True
-            # otherwise, the for loop does its work
-            if with_swap:
+            # check if the current substring and its complement have the same characters
+            if a == c and self.isScramble(s1[:i], s2[j:]) and self.isScramble(s1[i:], s2[:j]):
+                # if the substrings are scrambled versions of each other, return True
+                self.map[s1 + s2] = True
                 return True
-
-        self.mp[key] = False
+        # if none of the splits result in scrambled versions, return False
+        self.map[s1 + s2] = False
         return False
-
-    # for storing already solved problems
-    mp = {}
