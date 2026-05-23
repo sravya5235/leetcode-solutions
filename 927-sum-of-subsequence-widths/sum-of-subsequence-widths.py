@@ -1,3 +1,13 @@
 class Solution:
-    def sumSubseqWidths(self, nums: List[int]) -> int:
-        return sum(((1 << i) - (1 << len(nums) - i - 1)) * a for i, a in enumerate(sorted(nums))) % (10 ** 9 + 7)
+    def sumSubseqWidths(self, nums: List[int], mod = 1_000_000_007) -> int:
+       
+        nums.sort()
+        n, ans, factor = len(nums), 0, 1
+       
+        for i in range(n):
+        
+            ans+= (nums[i] - nums[~i]) * factor
+            factor*= 2
+            factor%= mod
+           
+        return ans % mod
